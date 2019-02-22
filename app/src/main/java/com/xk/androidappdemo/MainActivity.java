@@ -11,6 +11,7 @@ import com.facebook.litho.ComponentContext;
 public class MainActivity extends AppCompatActivity {
 
     private MBroadcastReceiver mBroadcastReceiver;
+    private MView mView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        MView mView = (MView) findViewById(R.id.mview);
+        mView = (MView) findViewById(R.id.mview);
         ImageView imageView = (ImageView) findViewById(R.id.tv);
 
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test);
@@ -30,4 +31,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mView.invalidate();
+    }
 }

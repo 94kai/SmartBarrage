@@ -36,6 +36,7 @@ public class MView1 extends View {
     private int width;
     private int height;
     private Shader shader;
+    private String dataFileName;
 
     public MView1(Context context) {
         super(context);
@@ -83,7 +84,7 @@ public class MView1 extends View {
      */
     private void drawContoursByData(Canvas canvas) {
         try {
-            InputStream data = getContext().getAssets().open("dataForAIZhuchiren.json");
+            InputStream data = getContext().getAssets().open(dataFileName);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(data));
             String line = null;
             StringBuffer sb = new StringBuffer();
@@ -132,8 +133,9 @@ public class MView1 extends View {
         }
     }
 
-    public void setBitmap(Bitmap bitmap) {
+    public void setBitmap(Bitmap bitmap, String dataFileName) {
         this.bitmap = bitmap;
+        this.dataFileName = dataFileName;
         invalidate();
     }
 }

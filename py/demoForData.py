@@ -117,85 +117,87 @@ import time
 from skimage.measure import find_contours
 
 
-
 # ## Run Object Detection
 
 # In[5]:
 
 
-# Load a random image from the images folder
-file_names = "./image/paonan.jpg"
-image = skimage.io.imread(file_names)
+def handleImageByFileName(file_names):
+    handleImage(skimage.io.imread(file_names))
 
 
-# 把数据存入data中。最后转成json
-data = {}
-# 存储图像的大小，在安卓设备绘制遮罩的时候需要根据这个大小进行缩放
-data["shape"] = [image.shape[0], image.shape[1]]
-# 一张图可能有多个人物，一个人物会有多个轮廓，用数组存
-data['contours'] = []
-# Run detection
-results = model.detect([image], verbose=1)
 
-# Visualize results
-r = results[0]
+def handleImage(image):
+    # Load a random image from the images folder
+    # file_names = "./image/test1.jpeg"
 
-# 以下代码修改自visualize.display_instances方法
-# 获取id
-class_ids = r['class_ids']
-masks = r['masks']
-boxes = r['rois']
-# Number of instances
-N = boxes.shape[0]
-ax = None
+    # 把数据存入data中。最后转成json
+    data = {}
+    # 存储图像的大小，在安卓设备绘制遮罩的时候需要根据这个大小进行缩放
+    data["shape"] = [image.shape[0], image.shape[1]]
+    # 一张图可能有多个人物，一个人物会有多个轮廓，用数组存
+    data['contours'] = []
+    # Run detection
+    results = model.detect([image], verbose=1)
 
-# Generate random colors
+    # Visualize results
+    r = results[0]
 
-# Show area outside image boundaries.
-height, width = image.shape[:2]
+    # 以下代码修改自visualize.display_instances方法
+    # 获取id
+    class_ids = r['class_ids']
+    masks = r['masks']
+    boxes = r['rois']
+    # Number of instances
+    N = boxes.shape[0]
+    ax = None
 
-masked_image = image.astype(np.uint32).copy()
+    # Generate random colors
 
+    # Show area outside image boundaries.
+    height, width = image.shape[:2]
 
-# 转换轮廓数据为坐标数据
-def getContourData(contour):
-    contourData = []
-    for point in contour:
-        contourData.append([point[0],point[1]])
-    return contourData
+    masked_image = image.astype(np.uint32).copy()
 
+    # 转换轮廓数据为坐标数据
+    def getContourData(contour):
+        contourData = []
+        for point in contour:
+            contourData.append([point[0], point[1]])
+        return contourData
 
-for i in range(N):
-    class_id = class_ids[i]
-    label = class_names[class_id]
-    # 如果不是人，跳过
-    if (label != 'person'):
-        continue
-    # Bounding box
-    if not np.any(boxes[i]):
-        # Skip this instance. Has no bbox. Likely lost in image cropping.
-        continue
-    y1, x1, y2, x2 = boxes[i]
+    for i in range(N):
+        class_id = class_ids[i]
+        label = class_names[class_id]
+        # 如果不是人，跳过
+        if (label != 'person'):
+            continue
+        # Bounding box
+        if not np.any(boxes[i]):
+            # Skip this instance. Has no bbox. Likely lost in image cropping.
+            continue
+        y1, x1, y2, x2 = boxes[i]
 
-    # Mask
-    mask = masks[:, :, i]
+        # Mask
+        mask = masks[:, :, i]
 
-    # Mask Polygon
-    # Pad to ensure proper polygons for masks that touch image edges.
-    padded_mask = np.zeros(
-        (mask.shape[0] + 2, mask.shape[1] + 2), dtype=np.uint8)
-    padded_mask[1:-1, 1:-1] = mask
-    contours = find_contours(padded_mask, 0.5)
-    # for verts in contours:
-    # 遍历轮廓
-    for contour in contours:
-        # Subtract the padding and flip (y, x) to (x, y)
-        contour = np.fliplr(contour) - 1
-        # 轮廓数据构添加到集合中。
-        contourData = getContourData(contour)
-        data['contours'].append(contourData)
-        # printImg(contour, contour)
+        # Mask Polygon
+        # Pad to ensure proper polygons for masks that touch image edges.
+        padded_mask = np.zeros(
+            (mask.shape[0] + 2, mask.shape[1] + 2), dtype=np.uint8)
+        padded_mask[1:-1, 1:-1] = mask
+        contours = find_contours(padded_mask, 0.5)
+        # for verts in contours:
+        # 遍历轮廓
+        for contour in contours:
+            # Subtract the padding and flip (y, x) to (x, y)
+            contour = np.fliplr(contour) - 1
+            # 轮廓数据构添加到集合中。
+            contourData = getContourData(contour)
+            data['contours'].append(contourData)
+            # printImg(contour, contour)
 
-print(data)
-visualize.display_instances(image, r['rois'], r['masks'], r['class_ids'],
-                            class_names, r['scores'], show_bbox=False, show_mask=False)
+    return data
+    # print(data)
+    # visualize.display_instances(image, r['rois'], r['masks'], r['class_ids'],
+    #                             class_names, r['scores'], show_bbox=False, show_mask=False)

@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 # Root directory of the project
 from IPython.core.display import JSON
 
-ROOT_DIR = os.path.abspath("../")
+ROOT_DIR = os.path.abspath("./")
 
 # Import Mask RCNN
 sys.path.append(ROOT_DIR)  # To find local version of the library
@@ -126,7 +126,6 @@ def handleImageByFileName(file_names):
     handleImage(skimage.io.imread(file_names))
 
 
-
 def handleImage(image):
     # Load a random image from the images folder
     # file_names = "./image/test1.jpeg"
@@ -203,25 +202,87 @@ def handleImage(image):
     #                             class_names, r['scores'], show_bbox=False, show_mask=False)
 
 
-
-
 # ======================
-# 以下为图片转换
-image = handleImage(skimage.io.imread("/image/paonan"))
-# Load a random image from the images folder
-# file_names = "./image/test1.jpeg"
 
-# 把数据存入data中。最后转成json
-data = {}
-# 存储图像的大小，在安卓设备绘制遮罩的时候需要根据这个大小进行缩放
-data["shape"] = [image.shape[0], image.shape[1]]
-# 一张图可能有多个人物，一个人物会有多个轮廓，用数组存
-data['contours'] = []
-# Run detection
-results = model.detect([image], verbose=1)
+# import cv2
+# import time
+# import demoForData
+# from PIL import Image
+#
+# cap = cv2.VideoCapture("../app/src/main/res/raw/video.mp4")
+# fourcc = cv2.VideoWriter_fourcc(*'XVID')
+# num = 0
+# currentTime = time.time()
+# # 获取总的帧数
+# frames_num = cap.get(7)
+#
+# print(frames_num)
+# currentFrame = 0
+# lastFrame = ""
+# while cap.isOpened():
+#     currentFrame += 1
+#     # get a frame
+#     rval, frame = cap.read()
+#     # save a frame
+#     if currentFrame == 3:
+#         rval = False
+#     if rval == True:
+#         lastFrame = frame
+#         # print(type(rval))
+#         # print(type(frame))
+#         # 获取到当前帧的数据
+#         try:
+#             print("成功处理第" + str(currentFrame) + "帧")
+#             # frameData = demoForData.handleImage(frame)
+#         except:
+#             print("错误处理第" + str(currentFrame) + "帧")
+#         #  frame = cv2.flip(frame,0)
+#         # Start time
+#         # start = time.time()
+#         # #        rclasses, rscores, rbboxes=process_image(frame) #换成自己调用的函数
+#         #
+#         # clean_image_tensor = process_image(data_hazy)  # 换成自己调用的函数
+#         # # End time
+#         #
+#         # end = time.time()
+#         # # Time elapsed
+#         # seconds = end - start + 0.0001
+#         # print("Time taken : {0} seconds".format(seconds))
+#         # # Calculate frames per second
+#         # fps = 1 / seconds;
+#         # print("Estimated frames per second : {0}".format(fps));
+#         # # bboxes_draw_on_img(frame,rclasses,rscores,rbboxes)
+#         # # print(rclasses)
+#         # out.write(clean_image)
+#         # num = num + 1
+#         # print(num)
+#         # fps = cap.get(cv2.CAP_PROP_FPS)
+#         # print("Frames per second using video.get(cv2.CAP_PROP_FPS) : {0}".format(fps))
+#         print("用时" + str(time.time() - currentTime) + ",总共" + str(frames_num) + "帧，当前处理了" + str(currentFrame) + "帧")
+#     else:
+#         # plt.imshow(lastFrame)
+#         # plt.show()
+#         print("error处理第" + str(currentFrame) + "帧")
+#         break
 
-# Visualize results
-r = results[0]
+
+# # 以下为图片转换
+# # image = skimage.io.imread("./image/paonan.jpg")
+# image = lastFrame
+# # Load a random image from the images folder
+# # file_names = "./image/test1.jpeg"
+#
+# # 把数据存入data中。最后转成json
+# data = {}
+# # 存储图像的大小，在安卓设备绘制遮罩的时候需要根据这个大小进行缩放
+# data["shape"] = [image.shape[0], image.shape[1]]
+# # 一张图可能有多个人物，一个人物会有多个轮廓，用数组存
+# data['contours'] = []
+# # Run detection
+# results = model.detect([image], verbose=1)
+#
+# # Visualize results
+# r = results[0]
 #
 # # 以下代码修改自visualize.display_instances方法
 # # 获取id
@@ -278,5 +339,5 @@ r = results[0]
 #         # printImg(contour, contour)
 #
 # print(data)
-visualize.display_instances(image, r['rois'], r['masks'], r['class_ids'],
-                            class_names, r['scores'], show_bbox=False, show_mask=False)
+# visualize.display_instances(image, r['rois'], r['masks'], r['class_ids'],
+#                             class_names, r['scores'], show_bbox=False, show_mask=False)
